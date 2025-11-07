@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KRD Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h2>KRD Converter</h2>
+  <input type="text" id="code" placeholder="Tessan veya Karadeniz kodu girin">
+  <button onclick="convert()">Dönüştür</button>
+  <div id="result"></div>
+
+  <script>
+  async function convert() {
+    const code = document.getElementById('code').value.trim();
+    const resultDiv = document.getElementById('result');
+
+    if (!code) {
+      resultDiv.innerText = "Lütfen bir kod girin.";
+      return;
+    }
+
+    resultDiv.innerText = "Dönüştürülüyor...";
+
+    try {
+      const res = await fetch(`/api/convert?q=${encodeURIComponent(code)}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        resultDiv.innerText = `${data.input_company} (${data.input_code}) → ${data.output_company} (${data.output_code})`;
+      } else {
+        resultDiv.innerText = data.message || "Ürün bulunamadı.";
+      }
+    } catch (err) {
+      resultDiv.innerText = "Bir hata oluştu.";
+    }
+  }
+</script>
+
+</html>
